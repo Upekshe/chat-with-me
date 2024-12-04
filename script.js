@@ -7,7 +7,22 @@ class ChatApplication {
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
         this.chatBox = document.getElementById('chat-box');
+        this.welcomeMessageElement;
 
+       // removing this for the moment 
+        const welcomeMessageElement = document.getElementById('welcome-message');
+        // if (welcomeMessageElement) {
+        //     this.welcomeMessageElement = welcomeMessageElement;
+        //     this.welcomeMessageElement.textContent = 'Hey, I am the friend you never had!';
+        //     setTimeout(() => {
+        //         this.removeWelcomeMessage();
+        //     }, 200000);
+        // }
+                // const welcomeMessageElement = document.getElementById('welcome-message');
+        if (welcomeMessageElement) {
+            this.welcomeMessageElement = welcomeMessageElement;
+            this.welcomeMessageElement.textContent = 'Hey, chat with me, I am a good listener!';
+        }
             sendBtn.addEventListener('click', () => {
                 if (messageInput.value !== '') {
                     const messageText = messageInput.value;
@@ -15,13 +30,11 @@ class ChatApplication {
                     sendBtn.disabled = true;
                     messageInput.value = '';
                     const chatBox = this.chatBox;
-                    // Simulate a delay for sending the message
                     setTimeout(() => {
                         this.sendMessage(messageText);
                         const loadingElement = document.createElement('div');
 
                         this.bot.send(messageText).then((response) => {
-                            // Hide loading animation
                             const loadingElementIndex = Array.prototype.indexOf.call(chatBox.children, loadingElement);
                             if (loadingElementIndex !== -1) {
                                 this.chatBox.removeChild(loadingElement);
@@ -63,6 +76,13 @@ class ChatApplication {
             ${this.messages[this.messages.length - 1].text}
         `;
         this.chatBox.appendChild(newMessage);
+    }
+
+    removeWelcomeMessage() {
+        if (this.welcomeMessageElement) {
+            this.chatBox.appendChild(this.welcomeMessageElement);
+            this.welcomeMessageElement.remove();
+        }
     }
 }
 

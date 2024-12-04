@@ -10,6 +10,16 @@
     flex-direction: column;
 }
 
+#welcome-message {
+    font-size: 36px;
+    font-weight: italic;
+    text-align: center;
+    background-color: #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
 #message-input, #send-btn {
     margin-right: 10px;
 }
