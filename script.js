@@ -101,15 +101,19 @@ class ChatApplication {
         //     ${this.messages[this.messages.length - 1].text}
         // `;
         this.chatBox.appendChild(newMessage);
-        
+        this.scrollChatBoxToBottom();
         //this.speak(this.markdownToPlainText(responseText));
 
     }
 
+    scrollChatBoxToBottom() {
+        this.chatBox.scrollTop = this.chatBox.scrollHeight;
+    }
+
     markdownToPlainText(markdown) {
         return marked.parse(markdown, { renderer: new marked.Renderer(), gfm: false });
-      }
-      
+    }
+
 
     removeWelcomeMessage() {
         if (this.welcomeMessageElement) {

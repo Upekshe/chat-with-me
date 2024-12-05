@@ -280,6 +280,7 @@ body {
     font-size: 0.9rem;
     word-wrap: break-word;
     word-break: break-word;
+    display: block;
   }
   
   /* Markdown-specific styling */
