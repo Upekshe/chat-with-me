@@ -93,16 +93,23 @@ class ChatApplication {
 
     sendRecipientResponse(responseText) {
         this.messages.push({ text: responseText, sender: 'other' });
-
         const newMessage = document.createElement('div');
         newMessage.classList.add('received', 'message');
-        newMessage.innerHTML = `
-            ${this.messages[this.messages.length - 1].text}
-        `;
+        const renderedMarkdown = marked.parse(responseText);
+        newMessage.innerHTML = renderedMarkdown;
+        // newMessage.innerHTML = `
+        //     ${this.messages[this.messages.length - 1].text}
+        // `;
         this.chatBox.appendChild(newMessage);
-        this.speak(responseText);
+        
+        //this.speak(this.markdownToPlainText(responseText));
 
     }
+
+    markdownToPlainText(markdown) {
+        return marked.parse(markdown, { renderer: new marked.Renderer(), gfm: false });
+      }
+      
 
     removeWelcomeMessage() {
         if (this.welcomeMessageElement) {
