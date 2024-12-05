@@ -1,10 +1,13 @@
 class Bot {
     constructor() {
+        if(!this.isServiceAvailable()) {
+            return;
+        }
         this.session = self.ai.languageModel.create({
-            systemPrompt: "Supportive and Empathetic Friend"
+            systemPrompt: "Supportive and Empathetic Friend, Keep the responses short and human like"
           });
         this.moderator = self.ai.languageModel.create({
-            systemPrompt:"Evaluator of a response, whether a certain response is okay to be sent to a person with depression. Always respond with either YES or NO, YES means it is suitable, NO means the provided text is not suitable"
+            systemPrompt:"Evaluator of the response, whether a certain response is okay to be sent to a person with depression. Always respond with either YES or NO, YES means it is suitable, NO means the provided text is not suitable"
         })
         this.rewriter = self.ai.languageModel.create({
             systemPrompt: "Avoid any toxic language and be as constructive as possible. avoid using any type of harmful content"
@@ -15,10 +18,16 @@ class Bot {
         //  });
     }
 
+    isServiceAvailable() {
+        if (!self.ai || !self.ai.languageModel) {
+           return false;
+        }
+        return true;
+    }
+
     async send(messageText) {
         console.log(`Bot: Sending response to "${messageText}"`);
 
-        // After a short delay, the bot will respond with its own message
             const responseText = await this.getResponse(messageText);
             console.log(`Bot: Response: ${responseText}`);
             const isAppropriate = await this.evaluateResponse(responseText);
@@ -35,8 +44,7 @@ class Bot {
 
     async evaluateResponse(response) {
        const isAppropriate = await (await this.moderator).prompt(response);
-       console.log("The response:", response);
-       console.log("is Appropriate:", isAppropriate);
+       console.log("Is the response appropriate:", isAppropriate);
        return isAppropriate === 'YES'
     }
 

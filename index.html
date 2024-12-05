@@ -11,11 +11,13 @@
 </head>
 
 <body>
-    <div id="welcome-message"></div>
-    <div class="container">
-        <div id="chat-box"></div>
-        <div id="message-input-box">
-            <input type="text" id="message-input" placeholder="Type a message...">
+    <div id="not-supported-message" hidden></div>
+    <div class="chat-container" hidden>
+        <div class="chat-header"></div>
+        <div id="chat-messages" class="chat-messages">
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type a message..." />
             <button id="send-btn">Send</button>
         </div>
     </div>
