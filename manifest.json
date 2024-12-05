@@ -13,8 +13,8 @@
         "type": "image/png"
       }
     ],
-    "start_url": "http://localhost:3000",
-    "scope": "http://localhost:3000",
+    "start_url": "https://upekshe.github.io/chat-with-me/",
+    "scope": "https://upekshe.github.io/chat-with-me/",
     "background_color": "#ffffff",
     "display": "standalone",
     "theme_color": "#4CAF50"
