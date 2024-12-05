@@ -1,0 +1,21 @@
+{
+    "short_name": "Chat with me",
+    "name": "Chat with me",
+    "icons": [
+      {
+        "src": "icon.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "favicon.ico",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "https://upekshe.github.io/chat-with-me/",
+    "scope": "https://upekshe.github.io/chat-with-me/",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "theme_color": "#4CAF50"
+  }

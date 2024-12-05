@@ -1,66 +1,91 @@
 class ChatApplication {
     constructor() {
+        this.bot = new Bot();
+        if (!this.bot.isServiceAvailable()) {
+            const errorMessage = document.getElementById('not-supported-message');
+            errorMessage.style.display = "block";
+            errorMessage.innerHTML = `Sorry, Your browser doesn't support the AI on browser.`;
+            errorMessage.hidden = false;;
+            return;
+        }
+
         this.messages = [];
         this.senderMessageId = 0;
-        this.bot = new Bot();
 
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
-        this.chatBox = document.getElementById('chat-box');
-        this.welcomeMessageElement;
+        this.chatBox = document.getElementById('chat-messages');
 
-       // removing this for the moment 
-        const welcomeMessageElement = document.getElementById('welcome-message');
-        // if (welcomeMessageElement) {
-        //     this.welcomeMessageElement = welcomeMessageElement;
-        //     this.welcomeMessageElement.textContent = 'Hey, I am the friend you never had!';
-        //     setTimeout(() => {
-        //         this.removeWelcomeMessage();
-        //     }, 200000);
-        // }
-                // const welcomeMessageElement = document.getElementById('welcome-message');
-        if (welcomeMessageElement) {
-            this.welcomeMessageElement = welcomeMessageElement;
-            this.welcomeMessageElement.textContent = 'Hey, chat with me, I am a good listener!';
-        }
-            sendBtn.addEventListener('click', () => {
-                if (messageInput.value !== '') {
-                    const messageText = messageInput.value;
-                    messageInput.disabled = true;
-                    sendBtn.disabled = true;
-                    messageInput.value = '';
-                    const chatBox = this.chatBox;
-                    setTimeout(() => {
-                        this.sendMessage(messageText);
-                        const loadingElement = document.createElement('div');
+        messageInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const messageText = messageInput.value;
+                messageInput.disabled = true;
+                sendBtn.disabled = true;
+                messageInput.value = '';
+                this.sendMessage(messageText, () => {
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                });
+            }
+        });
 
-                        this.bot.send(messageText).then((response) => {
-                            const loadingElementIndex = Array.prototype.indexOf.call(chatBox.children, loadingElement);
-                            if (loadingElementIndex !== -1) {
-                                this.chatBox.removeChild(loadingElement);
-                            }
-                            this.sendRecipientResponse(response);
-                            messageInput.disabled = false;
-                            sendBtn.disabled = false;
-                        });
-
-                        loadingElement.classList.add('sender', 'message');
-                        loadingElement.innerHTML = `
-                        <span style="font-style: italic;">typing...</span>
-                        `;
-                        this.chatBox.appendChild(loadingElement);
-                        }, 100);
-                }
+        sendBtn.addEventListener('click', () => {
+            const messageText = messageInput.value;
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+            messageInput.value = '';
+            this.sendMessage(messageText, () => {
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
             });
-        };
+        });
+    };
 
-    sendMessage(messageText) {
-        this.messages.push({ text: messageText, sender: 'other' });
+    sendMessage(messageText, callback) {
+        if (messageText == null || messageText.length < 1) { return; }
+        const chatBox = this.chatBox;
+        setTimeout(() => {
+            this.onMessageSent(messageText);
+            const loadingElement = document.createElement('div');
+
+            this.bot.send(messageText).then((response) => {
+                const loadingElementIndex = Array.prototype.indexOf.call(chatBox.children, loadingElement);
+                if (loadingElementIndex !== -1) {
+                    this.chatBox.removeChild(loadingElement);
+                }
+                this.sendRecipientResponse(response);
+                callback();
+            });
+
+            loadingElement.classList.add('received', 'message', 'typing-indicator');
+            loadingElement.innerHTML = `
+                    <span class="typing-text">typing<span class="dots"></span></span>
+                    `;
+            this.chatBox.appendChild(loadingElement);
+        }, 100);
+    }
+
+    removeEmojis(text) {
+        return text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u2600-\u26FF\u2700-\u27BF]+/gu, '');
+    }
+
+    speak(text) {
+        const utterance = new SpeechSynthesisUtterance(this.removeEmojis(text));
+        utterance.pitch = 1.2;
+        utterance.rate = 1.1;
+        utterance.volume = 1;
+        utterance.emotion = 'happy'
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    onMessageSent(messageText) {
+        this.messages.push({ text: messageText, sender: 'self' });
 
         const newMessage = document.createElement('div');
-        newMessage.classList.add('receiver', 'message');
+        newMessage.classList.add('sent', 'message');
         newMessage.innerHTML = `
-            <span class="sender-icon">${'Y'}</span>
             ${this.messages[this.messages.length - 1].text}
         `;
         this.chatBox.appendChild(newMessage);
@@ -70,12 +95,13 @@ class ChatApplication {
         this.messages.push({ text: responseText, sender: 'other' });
 
         const newMessage = document.createElement('div');
-        newMessage.classList.add('sender', 'message');
+        newMessage.classList.add('received', 'message');
         newMessage.innerHTML = `
-            <span class="receiver-icon">${'R'}</span>
             ${this.messages[this.messages.length - 1].text}
         `;
         this.chatBox.appendChild(newMessage);
+        this.speak(responseText);
+
     }
 
     removeWelcomeMessage() {
