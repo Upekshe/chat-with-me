@@ -4,7 +4,7 @@ class Bot {
             return;
         }
 
-        this.defaultMessageOnError='Sorry, we ran into an issue, Let us try again?'
+        this.defaultMessageOnError = 'Sorry, we ran into an issue, Let us try again?'
 
         this.session = self.ai.languageModel.create({
             systemPrompt: "You are a supportive and Empathetic friend, you are an average human, The response should be human like, for example in the start of the conversation a hello or a hi or a simple Hey needs to be responded with something similar to Hello, how are you?, You are not an expert in any field or area, you simulate an average human, for example if the question is about medical advise or coding, you can just reply something similar to Sorry I do not know about this subject, about the human history you do not know or have seen anything about any human conflict happened or happening in the history, so you can not provide an opinion on those"
@@ -31,14 +31,14 @@ class Bot {
     async send(messageText) {
         console.log(`Bot: Sending response to "${messageText}"`);
 
-        const responseText = await this.getResponse(messageText).catch(ex=>this.defaultMessageOnError);
+        const responseText = await this.getResponse(messageText).catch(ex => this.defaultMessageOnError);
         console.log(`Bot: Response: ${responseText}`);
         const isAppropriate = await this.evaluateResponse(responseText).catch(e => false);
         if (isAppropriate) {
             return responseText;
         }
-        const updatedResponse =  this.rewrite(responseText).catch(ex=>this.defaultMessageOnError);
-        feedUpdatedResponseToChatBot(updatedResponse);
+        const updatedResponse = this.rewrite(responseText).catch(ex => this.defaultMessageOnError);
+        this.feedUpdatedResponseToChatBot(updatedResponse);
         return updatedResponse;
     }
 
