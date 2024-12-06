@@ -89,6 +89,7 @@ class ChatApplication {
             ${this.messages[this.messages.length - 1].text}
         `;
         this.chatBox.appendChild(newMessage);
+        this.scrollChatBoxToBottom();
     }
 
     sendRecipientResponse(responseText) {
