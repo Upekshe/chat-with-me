@@ -37,7 +37,9 @@ class Bot {
         if (isAppropriate) {
             return responseText;
         }
-        return this.rewrite(responseText).catch(ex=>this.defaultMessageOnError);
+        const updatedResponse =  this.rewrite(responseText).catch(ex=>this.defaultMessageOnError);
+        feedUpdatedResponseToChatBot(updatedResponse);
+        return updatedResponse;
     }
 
     async getResponse(messageText) {
@@ -52,6 +54,10 @@ class Bot {
 
     async rewrite(currentResponse) {
         return (await this.rewriter).prompt(currentResponse);
+    }
+
+    async feedUpdatedResponseToChatBot(updatedResponse) {
+        (await this.session).prompt(`Your last response was inappropriate, it had either harmful or toxic message. The accepted response is "${updatedResponse}". Just reply "OK" to this message.`)
     }
 
     start() { }
